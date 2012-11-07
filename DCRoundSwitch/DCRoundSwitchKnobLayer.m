@@ -14,7 +14,6 @@
 CGGradientRef CreateGradientRefWithColors(CGColorSpaceRef colorSpace, CGColorRef startColor, CGColorRef endColor);
 
 @implementation DCRoundSwitchKnobLayer
-@synthesize gripped;
 
 - (void)drawInContext:(CGContextRef)context
 {
@@ -62,7 +61,7 @@ CGGradientRef CreateGradientRefWithColors(CGColorSpaceRef colorSpace, CGColorRef
 
 - (void)setGripped:(BOOL)newGripped
 {
-	gripped = newGripped;
+	_gripped = newGripped;
 	[self setNeedsDisplay];
 }
 
