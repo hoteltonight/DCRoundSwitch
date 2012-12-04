@@ -329,62 +329,74 @@
 	_on = newOn;
 	self.ignoreTap = YES;
 
-	[CATransaction setAnimationDuration:0.014];
+    if (animated)
+    {
+        [CATransaction setAnimationDuration:0.014];
+    }
 	self.knobLayer.gripped = YES;
 
 	// setup by turning off the manual clipping of the toggleLayer and setting up a layer mask.
 	[self useLayerMasking];
 	[self positionLayersAndMask];
 
-	[CATransaction setCompletionBlock:^{
-		[CATransaction begin];
-		if (!animated)
-			[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
-		else
-			[CATransaction setValue:(id)kCFBooleanFalse forKey:kCATransactionDisableActions];
+    void (^completionBlock)() = ^{
+        [CATransaction begin];
+        if (!animated)
+            [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+        else
+            [CATransaction setValue:(id)kCFBooleanFalse forKey:kCATransactionDisableActions];
 
-		CGFloat minToggleX = -self.toggleLayer.frame.size.width / 2.0 + self.toggleLayer.frame.size.height / 2.0;
-		CGFloat maxToggleX = -1;
+        CGFloat minToggleX = -self.toggleLayer.frame.size.width / 2.0 + self.toggleLayer.frame.size.height / 2.0;
+        CGFloat maxToggleX = -1;
 
 
-		if (self.on)
-		{
-			self.toggleLayer.frame = CGRectMake(maxToggleX,
-										   self.toggleLayer.frame.origin.y,
-										   self.toggleLayer.frame.size.width,
-										   self.toggleLayer.frame.size.height);
-		}
-		else
-		{
-			self.toggleLayer.frame = CGRectMake(minToggleX,
-										   self.toggleLayer.frame.origin.y,
-										   self.toggleLayer.frame.size.width,
-										   self.toggleLayer.frame.size.height);
-		}
+        if (self.on)
+        {
+            self.toggleLayer.frame = CGRectMake(maxToggleX,
+                                                self.toggleLayer.frame.origin.y,
+                                                self.toggleLayer.frame.size.width,
+                                                self.toggleLayer.frame.size.height);
+        }
+        else
+        {
+            self.toggleLayer.frame = CGRectMake(minToggleX,
+                                                self.toggleLayer.frame.origin.y,
+                                                self.toggleLayer.frame.size.width,
+                                                self.toggleLayer.frame.size.height);
+        }
 
-		if (!self.toggleLayer.mask)
-		{
-			[self useLayerMasking];
-			[self.toggleLayer setNeedsDisplay];
-		}
+        if (!self.toggleLayer.mask)
+        {
+            [self useLayerMasking];
+            [self.toggleLayer setNeedsDisplay];
+        }
 
-		[self positionLayersAndMask];
+        [self positionLayersAndMask];
 
-		self.knobLayer.gripped = NO;
+        self.knobLayer.gripped = NO;
 
         __block __typeof(self) _self = self;
-		[CATransaction setCompletionBlock:^{
-			[_self removeLayerMask];
-			_self.ignoreTap = NO;
+        [CATransaction setCompletionBlock:^{
+            [_self removeLayerMask];
+            _self.ignoreTap = NO;
 
-			// send the action here so it get's sent at the end of the animations
-			if (previousOn != _on && !ignoreControlEvents)
-				[_self sendActionsForControlEvents:UIControlEventValueChanged];
+            // send the action here so it get's sent at the end of the animations
+            if (previousOn != _on && !ignoreControlEvents)
+                [_self sendActionsForControlEvents:UIControlEventValueChanged];
 
-		}];
+        }];
 
-		[CATransaction commit];
-	}];
+        [CATransaction commit];
+    };
+
+    if (animated)
+    {
+        [CATransaction setCompletionBlock:completionBlock];
+    }
+    else
+    {
+        completionBlock();
+    }
 }
 
 - (void)setOnTintColor:(UIColor *)anOnTintColor
