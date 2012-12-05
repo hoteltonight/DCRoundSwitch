@@ -21,7 +21,6 @@
 @property (nonatomic, strong) DCRoundSwitchKnobLayer *knobLayer;
 @property (nonatomic, strong) CAShapeLayer *clipLayer;
 @property (nonatomic, assign) BOOL ignoreTap;
-@property (nonatomic, readonly) UIFont *labelFont;
 
 - (void)setup;
 - (void)useLayerMasking;
