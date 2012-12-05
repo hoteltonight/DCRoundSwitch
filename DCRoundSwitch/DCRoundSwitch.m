@@ -21,6 +21,7 @@
 @property (nonatomic, strong) DCRoundSwitchKnobLayer *knobLayer;
 @property (nonatomic, strong) CAShapeLayer *clipLayer;
 @property (nonatomic, assign) BOOL ignoreTap;
+@property (nonatomic, readonly) UIFont *labelFont;
 
 - (void)setup;
 - (void)useLayerMasking;
@@ -116,6 +117,7 @@
 	self.toggleLayer = [[[[self class] toggleLayerClass] alloc] initWithOnString:self.onText offString:self.offText onTintColor:[UIColor colorWithRed:0.000 green:0.478 blue:0.882 alpha:1.0]];
 	self.toggleLayer.drawOnTint = NO;
 	self.toggleLayer.clip = YES;
+	self.toggleLayer.frame = self.bounds;
 	[self.layer addSublayer:self.toggleLayer];
 	[self.toggleLayer setNeedsDisplay];
 
@@ -453,6 +455,11 @@
 		self.toggleLayer.offString = _offText;
 		[self.toggleLayer setNeedsDisplay];
 	}
+}
+
+- (UIFont *)labelFont
+{
+    return self.toggleLayer.labelFont;
 }
 
 @end
